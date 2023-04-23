@@ -974,6 +974,10 @@ class Trainer(object):
         accelerator = self.accelerator
         device = accelerator.device
 
+        # tensorboard log
+        from torch.utils.tensorboard import SummaryWriter
+        tb_writer = SummaryWriter(log_dir=self.results_folder)
+
         with tqdm(initial = self.step, total = self.train_num_steps, disable = not accelerator.is_main_process) as pbar:
 
             while self.step < self.train_num_steps:
@@ -987,6 +991,9 @@ class Trainer(object):
                         loss = self.model(data)
                         loss = loss / self.gradient_accumulate_every
                         total_loss += loss.item()
+
+                        # tensorboard log
+                        tb_writer.add_scalar("loss", loss.item(), self.step)
 
                     self.accelerator.backward(loss)
 
