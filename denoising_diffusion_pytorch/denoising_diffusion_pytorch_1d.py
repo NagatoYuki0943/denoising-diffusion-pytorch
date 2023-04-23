@@ -842,6 +842,10 @@ class Trainer1D(object):
         accelerator = self.accelerator
         device = accelerator.device
 
+        # tensorboard log
+        from torch.utils.tensorboard import SummaryWriter
+        tb_writer = SummaryWriter(log_dir=self.results_folder)
+
         with tqdm(initial = self.step, total = self.train_num_steps, disable = not accelerator.is_main_process) as pbar:
 
             while self.step < self.train_num_steps:
@@ -860,6 +864,9 @@ class Trainer1D(object):
 
                 accelerator.clip_grad_norm_(self.model.parameters(), 1.0)
                 pbar.set_description(f'loss: {total_loss:.4f}')
+
+                # tensorboard log
+                tb_writer.add_scalar("loss", total_loss, self.step)
 
                 accelerator.wait_for_everyone()
 
