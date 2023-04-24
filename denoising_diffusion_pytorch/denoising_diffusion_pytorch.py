@@ -1030,6 +1030,9 @@ class Trainer(object):
                             fid_score = self.fid_score(real_samples = data, fake_samples = all_images)
                             accelerator.print(f'fid_score: {fid_score}')
 
+                            # tensorboard log
+                            tb_writer.add_scalar("fid_score", fid_score, self.step)
+
                 pbar.update(1)
 
         accelerator.print('training complete')
