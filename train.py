@@ -1,7 +1,7 @@
 from denoising_diffusion_pytorch import Unet, GaussianDiffusion, Trainer
 
 
-def train():
+if __name__ == "__main__":
     model = Unet(
         dim = 64,
         dim_mults = (1, 2, 4, 8)
@@ -17,20 +17,17 @@ def train():
 
     trainer = Trainer(
         diffusion,
-        r'../datasets/intel_origin_scenery/train/forest',
+        r'../datasets/intel_origin_scenery/train&val/forest',
         train_batch_size = 16,
         train_lr = 8e-5,
-        train_num_steps = 200000,         # total training steps
-        save_and_sample_every = 5000,
+        train_num_steps = 100000,         # total training steps (Sharing answer from the question "How many iterations do I need?")[https://github.com/lucidrains/denoising-diffusion-pytorch/issues/121]
+        save_and_sample_every = 1000,     # eva&save&sample steps
         gradient_accumulate_every = 1,    # gradient accumulation steps
         ema_decay = 0.995,                # exponential moving average decay
         amp = False,                      # turn off mixed precision, maybe cause NaN on 1080ti
         fp16 = False,
         calculate_fid = True,             # whether to calculate fid during training
+        results_folder = "results/forest_100000",
     )
 
     trainer.train()
-
-
-if __name__ == "__main__":
-    train()
