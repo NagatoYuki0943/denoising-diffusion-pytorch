@@ -24,20 +24,27 @@ if __name__ == "__main__":
     )
 
     # load weight
-    state_dict: dict = torch.load("results/forest_200000/model-40.pt")
+    state_dict: dict = torch.load("results/intel-image-classification-scenery/100000/model-50.pt")
     print(state_dict.keys()) # ['step', 'model', 'opt', 'ema', 'scaler', 'version']
     diffusion.load_state_dict(state_dict["model"])
     diffusion.to(device)
-
     # sample image
     diffusion.eval()
-    with torch.inference_mode():
-        y = diffusion.sample(batch_size=25)
-    print(y.size())
 
-    # save image
+    return_all_timesteps = True
+
+    with torch.inference_mode():
+        y = diffusion.sample(batch_size=25, return_all_timesteps=return_all_timesteps)
+    print(y.size())
     y1 = y.cpu().numpy()
-    y1 = np.transpose(y1, [0, 2, 3, 1])     # [B, C, H, W] -> [B, H, W, C]
     y1 = np.array(y1 * 255, dtype=np.uint8)
-    image = Image.fromarray(draw_mulit_images_in_one(y1))
-    image.save("result.png")
+
+    if not return_all_timesteps:
+        y1 = np.transpose(y1, [0, 2, 3, 1])     # [B, C, H, W] -> [B, H, W, C]
+        image = Image.fromarray(draw_mulit_images_in_one(y1, width_repeat=5))
+        image.save("result.png")
+    else:
+        y1 = np.transpose(y1, [0, 1, 4, 3, 2])  # [B, S, C, H, W] -> [B, S, H, W, C]
+        for i, yy in enumerate(y1):
+            image = Image.fromarray(draw_mulit_images_in_one(yy, width_repeat=16))
+            image.save(f"{i}.png")

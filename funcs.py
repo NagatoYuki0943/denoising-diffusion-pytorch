@@ -27,9 +27,9 @@ def draw_mulit_images_in_one(images: list[np.ndarray], width_repeat: int = 5, li
 
         # x y 坐标
         height_1 = height_index * (height + line_width)
-        height_2 = height_index * (height + line_width) + height
+        height_2 = height_1 + height
         width_1  = width_index  * (width + line_width)
-        width_2  = width_index  * (width + line_width) + width
+        width_2  = width_1 + width
 
         palette[height_1:height_2, width_1:width_2] = image
 

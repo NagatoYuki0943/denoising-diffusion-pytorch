@@ -896,7 +896,8 @@ class Trainer(object):
             self.ema.to(self.device)
 
         self.results_folder = Path(results_folder)
-        self.results_folder.mkdir(exist_ok = True)
+        import os
+        os.makedirs(self.results_folder, exist_ok = True)
 
         # step counter state
 
