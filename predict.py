@@ -24,27 +24,32 @@ if __name__ == "__main__":
     )
 
     # load weight
-    state_dict: dict = torch.load("results/intel-image-classification-scenery/100000/model-50.pt")
+    epoch = "90"
+    state_dict: dict = torch.load(f"results/intel-image-classification-scenery/glacier/100000/model-{epoch}.pt")
     print(state_dict.keys()) # ['step', 'model', 'opt', 'ema', 'scaler', 'version']
     diffusion.load_state_dict(state_dict["model"])
     diffusion.to(device)
-    # sample image
     diffusion.eval()
 
-    return_all_timesteps = True
+    return_all_timesteps = False
 
+    # sample image
     with torch.inference_mode():
-        y = diffusion.sample(batch_size=25, return_all_timesteps=return_all_timesteps)
+        y = diffusion.sample(batch_size=36, return_all_timesteps=return_all_timesteps)
     print(y.size())
     y1 = y.cpu().numpy()
     y1 = np.array(y1 * 255, dtype=np.uint8)
 
     if not return_all_timesteps:
         y1 = np.transpose(y1, [0, 2, 3, 1])     # [B, C, H, W] -> [B, H, W, C]
-        image = Image.fromarray(draw_mulit_images_in_one(y1, width_repeat=5))
-        image.save("result.png")
+        image = Image.fromarray(draw_mulit_images_in_one(y1, width_repeat=6))
+        image.save(f"model-{epoch}.png")
     else:
-        y1 = np.transpose(y1, [0, 1, 4, 3, 2])  # [B, S, C, H, W] -> [B, S, H, W, C]
+        y1 = np.transpose(y1, [0, 1, 3, 4, 2])  # [B, S, C, H, W] -> [B, S, H, W, C]
+        # 保存结果图片
+        image = Image.fromarray(draw_mulit_images_in_one(y1[:, -1], width_repeat=6))
+        image.save(f"model-{epoch}.png")
+        # 保存序列图片
         for i, yy in enumerate(y1):
             image = Image.fromarray(draw_mulit_images_in_one(yy, width_repeat=16))
-            image.save(f"{i}.png")
+            image.save(f"model-{epoch}-{i}.png")
