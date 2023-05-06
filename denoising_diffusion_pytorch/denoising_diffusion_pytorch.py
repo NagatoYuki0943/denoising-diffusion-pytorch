@@ -801,7 +801,8 @@ class Dataset(Dataset):
             T.Lambda(maybe_convert_fn),
             T.Resize(image_size),
             T.RandomHorizontalFlip() if augment_horizontal_flip else nn.Identity(),
-            T.CenterCrop(image_size),
+            # T.CenterCrop(image_size),
+            T.RandomCrop(image_size),   # for non square images
             T.ToTensor()
         ])
 

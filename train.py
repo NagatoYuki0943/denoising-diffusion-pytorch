@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     trainer = Trainer(
         diffusion,
-        r'../datasets/flowers',
+        r'../datasets/BingWallpapers',
         train_batch_size = 16,
         train_lr = 8e-5,
         train_num_steps = 100000,         # total training steps (Sharing answer from the question "How many iterations do I need?")[https://github.com/lucidrains/denoising-diffusion-pytorch/issues/121]
@@ -27,7 +27,7 @@ if __name__ == "__main__":
         amp = False,                      # turn off mixed precision, maybe cause NaN on 1080ti
         fp16 = False,
         calculate_fid = True,             # whether to calculate fid during training
-        results_folder = "results/flowers/100000",
+        results_folder = "results/BingWallpapers/100000",
     )
 
     trainer.train()
