@@ -955,7 +955,7 @@ class Trainer(object):
         features = rearrange(features, '... 1 1 -> ...')
 
         mu = torch.mean(features, dim = 0).cpu()
-        sigma = torch.cov(features).cpu()
+        sigma = torch.cov(rearrange(features, '... i j -> ... j i')).cpu()
         return mu, sigma
 
     def fid_score(self, real_samples, fake_samples):
