@@ -12,7 +12,6 @@ if __name__ == "__main__":
         image_size = 128,
         timesteps = 1000,           # number of steps
         sampling_timesteps = 250,   # number of sampling timesteps (using ddim for faster inference [see citation for ddim paper])
-        loss_type = 'l1'            # L1 or L2
     )
 
     trainer = Trainer(
