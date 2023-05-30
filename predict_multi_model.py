@@ -24,7 +24,7 @@ if __name__ == "__main__":
         sampling_timesteps=250,  # number of sampling timesteps (using ddim for faster inference [see citation for ddim paper])
     )
 
-    model_dir = r"results/flowers/100000/"
+    model_dir = r"results/flowers/100000"
     model_list = os.listdir(model_dir)
     model_list = [model for model in model_list if model.endswith("pt")]
     for model in model_list:

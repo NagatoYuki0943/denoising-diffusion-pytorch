@@ -23,7 +23,7 @@ if __name__ == "__main__":
     )
 
     # load weight
-    epoch = "89"
+    epoch = "100"
     state_dict: dict = torch.load(f"results/flowers/100000/model-{epoch}.pt")
     print(state_dict.keys())  # ['step', 'model', 'opt', 'ema', 'scaler', 'version']
     diffusion.load_state_dict(state_dict["model"])

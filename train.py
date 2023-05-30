@@ -26,7 +26,7 @@ if __name__ == "__main__":
         amp = False,                      # turn off mixed precision, maybe cause NaN on 1080ti
         fp16 = False,
         calculate_fid = True,             # whether to calculate fid during training
-        results_folder = "results/flowers/100000",
+        results_folder = r"results/flowers/100000",
     )
 
     trainer.train()
