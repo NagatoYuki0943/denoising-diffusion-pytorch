@@ -24,7 +24,7 @@ if __name__ == "__main__":
         gradient_accumulate_every = 1,    # gradient accumulation steps
         ema_decay = 0.995,                # exponential moving average decay
         amp = False,                      # turn off mixed precision, maybe cause NaN on 1080ti
-        fp16 = False,
+        mixed_precision_type = "fp16",
         calculate_fid = True,             # whether to calculate fid during training
         results_folder = r"results/flowers/100000",
     )
