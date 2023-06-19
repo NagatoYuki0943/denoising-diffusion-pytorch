@@ -706,6 +706,7 @@ class GaussianDiffusion(nn.Module):
 
         return img
 
+    @autocast(enabled = False)
     def q_sample(self, x_start, t, noise = None):
         noise = default(noise, lambda: torch.randn_like(x_start))
 
@@ -824,11 +825,12 @@ class Trainer(object):
         num_samples = 25,
         results_folder = './results',
         amp = False,
-        fp16 = False,
+        mixed_precision_type = 'fp16',
         split_batches = True,
         convert_image_to = None,
         calculate_fid = True,
-        inception_block_idx = 2048
+        inception_block_idx = 2048,
+        max_grad_norm = 1.
     ):
         super().__init__()
 
@@ -836,10 +838,8 @@ class Trainer(object):
 
         self.accelerator = Accelerator(
             split_batches = split_batches,
-            mixed_precision = 'fp16' if fp16 else 'no'
+            mixed_precision = mixed_precision_type if amp else 'no'
         )
-
-        self.accelerator.native_amp = amp
 
         # model
 
@@ -867,6 +867,8 @@ class Trainer(object):
 
         self.train_num_steps = train_num_steps
         self.image_size = diffusion_model.image_size
+
+        self.max_grad_norm = max_grad_norm
 
         # dataset and dataloader
 
@@ -986,7 +988,7 @@ class Trainer(object):
 
                     self.accelerator.backward(loss)
 
-                accelerator.clip_grad_norm_(self.model.parameters(), 1.0)
+                accelerator.clip_grad_norm_(self.model.parameters(), self.max_grad_norm)
                 pbar.set_description(f'loss: {total_loss:.4f}')
 
                 # tensorboard log
