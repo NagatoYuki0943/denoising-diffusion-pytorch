@@ -32,7 +32,8 @@ from denoising_diffusion_pytorch import Unet, GaussianDiffusion
 
 model = Unet(
     dim = 64,
-    dim_mults = (1, 2, 4, 8)
+    dim_mults = (1, 2, 4, 8),
+    flash_attn = True
 )
 
 diffusion = GaussianDiffusion(
@@ -57,7 +58,8 @@ from denoising_diffusion_pytorch import Unet, GaussianDiffusion, Trainer
 
 model = Unet(
     dim = 64,
-    dim_mults = (1, 2, 4, 8)
+    dim_mults = (1, 2, 4, 8),
+    flash_attn = True
 )
 
 diffusion = GaussianDiffusion(
@@ -152,10 +154,6 @@ sampled_seq.shape # (4, 32, 128)
 
 You could consider adding a suitable metric to the training loop yourself after doing an editable install of this package
 `pip install -e .`.
-
-## Todo
-
-- [ ] add flash attention, do full attention at 64x64, linear attention at anything above
 
 ## Citations
 
@@ -320,5 +318,14 @@ You could consider adding a suitable metric to the training loop yourself after 
     title   = {Common Diffusion Noise Schedules and Sample Steps are Flawed},
     author  = {Shanchuan Lin and Bingchen Liu and Jiashi Li and Xiao Yang},
     year    = {2023}
+}
+```
+
+```bibtex
+@inproceedings{dao2022flashattention,
+    title   = {Flash{A}ttention: Fast and Memory-Efficient Exact Attention with {IO}-Awareness},
+    author  = {Dao, Tri and Fu, Daniel Y. and Ermon, Stefano and Rudra, Atri and R{\'e}, Christopher},
+    booktitle = {Advances in Neural Information Processing Systems},
+    year    = {2022}
 }
 ```
