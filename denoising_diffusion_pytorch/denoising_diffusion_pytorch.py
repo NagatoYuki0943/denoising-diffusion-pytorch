@@ -1031,6 +1031,9 @@ class Trainer(object):
                         if self.calculate_fid:
                             fid_score = self.fid_scorer.fid_score()
                             accelerator.print(f'fid_score: {fid_score}')
+                            # tensorboard log
+                            tb_writer.add_scalar("fid_score", fid_score, self.step)
+
                         if self.save_best_and_latest_only:
                             if self.best_fid > fid_score:
                                 self.best_fid = fid_score
@@ -1038,9 +1041,6 @@ class Trainer(object):
                             self.save("latest")
                         else:
                             self.save(milestone)
-
-                            # tensorboard log
-                            tb_writer.add_scalar("fid_score", fid_score, self.step)
 
                 pbar.update(1)
 

@@ -23,8 +23,8 @@ if __name__ == "__main__":
     )
 
     # load weight
-    epoch = "100"
-    state_dict: dict = torch.load(f"results/flowers/100000/model-{epoch}.pt")
+    runs = "200"
+    state_dict: dict = torch.load(f"results/flowers/200000/model-{runs}.pt")
     print(state_dict.keys())  # ['step', 'model', 'opt', 'ema', 'scaler', 'version']
     diffusion.load_state_dict(state_dict["model"])
     diffusion.to(device)
@@ -42,13 +42,13 @@ if __name__ == "__main__":
     if not return_all_timesteps:
         y1 = np.transpose(y1, [0, 2, 3, 1])  # [B, C, H, W] -> [B, H, W, C]
         image = Image.fromarray(draw_mulit_images_in_one(y1, width_repeat=6))
-        image.save(f"model-{epoch}.png")
+        image.save(f"model-{runs}.png")
     else:
         y1 = np.transpose(y1, [0, 1, 3, 4, 2])  # [B, S, C, H, W] -> [B, S, H, W, C]
         # 保存结果图片
         image = Image.fromarray(draw_mulit_images_in_one(y1[:, -1], width_repeat=6))
-        image.save(f"model-{epoch}.png")
+        image.save(f"model-{runs}.png")
         # 保存序列图片
         for i, yy in enumerate(y1):
             image = Image.fromarray(draw_mulit_images_in_one(yy, width_repeat=16))
-            image.save(f"model-{epoch}-{i}.png")
+            image.save(f"model-{runs}-{i}.png")

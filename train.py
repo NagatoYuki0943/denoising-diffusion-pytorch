@@ -19,13 +19,13 @@ if __name__ == "__main__":
         r'../datasets/flowers',
         train_batch_size = 16,
         train_lr = 8e-5,
-        train_num_steps = 100000,         # total training steps (Sharing answer from the question "How many iterations do I need?")[https://github.com/lucidrains/denoising-diffusion-pytorch/issues/121]
+        train_num_steps = 200000,         # total training steps (Sharing answer from the question "How many iterations do I need?")[https://github.com/lucidrains/denoising-diffusion-pytorch/issues/121]
         save_and_sample_every = 1000,     # eva&save&sample steps
         gradient_accumulate_every = 1,    # gradient accumulation steps
         ema_decay = 0.995,                # exponential moving average decay
         amp = False,                      # turn off mixed precision, maybe cause NaN on 1080ti
         calculate_fid = True,             # whether to calculate fid during training
-        results_folder = r"results/flowers/100000",
+        results_folder = r"results/flowers/200000",
     )
 
     trainer.train()
