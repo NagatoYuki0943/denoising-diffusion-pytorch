@@ -808,8 +808,8 @@ class Dataset(Dataset):
             T.Lambda(maybe_convert_fn),
             T.Resize(image_size),
             T.RandomHorizontalFlip() if augment_horizontal_flip else nn.Identity(),
-            # T.CenterCrop(image_size),
-            T.RandomCrop(image_size),   # for non square images
+            T.CenterCrop(image_size),
+            # T.RandomCrop(image_size),   # for non square images
             T.ToTensor()
         ])
 
@@ -901,8 +901,7 @@ class Trainer(object):
             self.ema.to(self.device)
 
         self.results_folder = Path(results_folder)
-        import os
-        os.makedirs(self.results_folder, exist_ok = True)
+        self.results_folder.mkdir(exist_ok = True, parents = True) # parents 递归创建目录
 
         # step counter state
 

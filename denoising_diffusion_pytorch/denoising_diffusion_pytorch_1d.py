@@ -879,4 +879,5 @@ class Trainer1D(object):
 
                 pbar.update(1)
 
+        tb_writer.close()
         accelerator.print('training complete')
