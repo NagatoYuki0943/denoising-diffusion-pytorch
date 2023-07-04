@@ -4,7 +4,8 @@ from denoising_diffusion_pytorch import Unet, GaussianDiffusion, Trainer
 if __name__ == "__main__":
     model = Unet(
         dim = 64,
-        dim_mults = (1, 2, 4, 8)
+        dim_mults = (1, 2, 4, 8),
+        flash_attn = True,
     )
 
     diffusion = GaussianDiffusion(
@@ -23,7 +24,7 @@ if __name__ == "__main__":
         save_and_sample_every = 1000,     # eva&save&sample steps
         gradient_accumulate_every = 1,    # gradient accumulation steps
         ema_decay = 0.995,                # exponential moving average decay
-        amp = False,                      # turn off mixed precision, maybe cause NaN on 1080ti
+        amp = False,                      # turn on mixed precision
         calculate_fid = True,             # whether to calculate fid during training
         results_folder = r"results/flowers/200000",
     )
