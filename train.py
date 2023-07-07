@@ -29,4 +29,6 @@ if __name__ == "__main__":
         results_folder = r"results/flowers/200000",
     )
 
+    # trainer.load(r"100") # resume
+
     trainer.train()
