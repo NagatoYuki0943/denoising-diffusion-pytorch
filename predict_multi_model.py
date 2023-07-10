@@ -24,15 +24,30 @@ if __name__ == "__main__":
         sampling_timesteps=250,  # number of sampling timesteps (using ddim for faster inference [see citation for ddim paper])
     )
 
+    # 是否使用ema model
+    use_ema = False
+
     model_dir = r"results/flowers/100000"
     model_list = os.listdir(model_dir)
     model_list = [model for model in model_list if model.endswith("pt")]
+
     for model in model_list:
         print(f"model: {model}")
 
         # load weight
         state_dict: dict = torch.load(os.path.join(model_dir, model))
-        diffusion.load_state_dict(state_dict["model"])
+
+        if not use_ema:
+            diffusion.load_state_dict(state_dict["model"])
+        else:
+            ema_dict: dict = state_dict["ema"]
+            ema_keys = ema_dict.keys()
+            ema_model = {}
+            for key in ema_keys:
+                if "ema_model." in key:
+                    ema_model[key[10:]] = ema_dict[key]
+            diffusion.load_state_dict(ema_dict)
+
         diffusion.to(device)
         diffusion.eval()
 

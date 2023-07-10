@@ -26,10 +26,25 @@ if __name__ == "__main__":
     runs = "200"
     state_dict: dict = torch.load(f"results/flowers/200000/model-{runs}.pt")
     print(state_dict.keys())  # ['step', 'model', 'opt', 'ema', 'scaler', 'version']
-    diffusion.load_state_dict(state_dict["model"])
+
+    # 是否使用ema model
+    use_ema = True
+
+    if not use_ema:
+        diffusion.load_state_dict(state_dict["model"])
+    else:
+        ema_dict: dict = state_dict["ema"]
+        ema_keys = ema_dict.keys()
+        ema_model = {}
+        for key in ema_keys:
+            if "ema_model." in key:
+                ema_model[key[10:]] = ema_dict[key]
+        diffusion.load_state_dict(ema_model)
+
     diffusion.to(device)
     diffusion.eval()
 
+    # 返回所有的时间步
     return_all_timesteps = True
 
     # sample image
