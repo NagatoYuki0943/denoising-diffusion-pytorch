@@ -671,7 +671,7 @@ class GaussianDiffusion(nn.Module):
 
         for time, time_next in tqdm(time_pairs, desc = 'sampling loop time step'):
             time_cond = torch.full((batch,), time, device=device, dtype=torch.long)
-            pred_noise, x_start, *_ = self.model_predictions(img, time_cond, classes, cond_scale = cond_scale, clip_x_start = clip_denoised)
+            pred_noise, x_start, *_ = self.model_predictions(img, time_cond, classes, cond_scale = cond_scale, rescaled_phi = rescaled_phi, clip_x_start = clip_denoised)
 
             if time_next < 0:
                 img = x_start
@@ -699,7 +699,7 @@ class GaussianDiffusion(nn.Module):
         return sample_fn(classes, (batch_size, channels, image_size, image_size), cond_scale, rescaled_phi)
 
     @torch.no_grad()
-    def interpolate(self, x1, x2, t = None, lam = 0.5):
+    def interpolate(self, x1, x2, classes, t = None, lam = 0.5):
         b, *_, device = *x1.shape, x1.device
         t = default(t, self.num_timesteps - 1)
 
@@ -709,8 +709,9 @@ class GaussianDiffusion(nn.Module):
         xt1, xt2 = map(lambda x: self.q_sample(x, t = t_batched), (x1, x2))
 
         img = (1 - lam) * xt1 + lam * xt2
+
         for i in tqdm(reversed(range(0, t)), desc = 'interpolation sample time step', total = t):
-            img = self.p_sample(img, torch.full((b,), i, device=device, dtype=torch.long))
+            img, _ = self.p_sample(img, i, classes)
 
         return img
 
@@ -750,7 +751,7 @@ class GaussianDiffusion(nn.Module):
             raise ValueError(f'unknown objective {self.objective}')
 
         loss = F.mse_loss(model_out, target, reduction = 'none')
-        loss = reduce(loss, 'b ... -> b (...)', 'mean')
+        loss = reduce(loss, 'b ... -> b', 'mean')
 
         loss = loss * extract(self.loss_weight, t, loss.shape)
         return loss.mean()
@@ -795,3 +796,12 @@ if __name__ == '__main__':
     )
 
     sampled_images.shape # (8, 3, 128, 128)
+
+    # interpolation
+
+    interpolate_out = diffusion.interpolate(
+        training_images[:1],
+        training_images[:1],
+        image_classes[:1]
+    )
+
