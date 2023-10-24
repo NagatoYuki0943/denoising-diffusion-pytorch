@@ -896,6 +896,11 @@ class Trainer(object):
         self.channels = diffusion_model.channels
         is_ddim_sampling = diffusion_model.is_ddim_sampling
 
+        # default convert_image_to depending on channels
+
+        if not exists(convert_image_to):
+            convert_image_to = {1: 'L', 3: 'RGB', 4: 'RGBA'}.get(self.channels)
+
         # sampling and training hyperparameters
 
         assert has_int_squareroot(num_samples), 'number of samples must have an integer square root'
